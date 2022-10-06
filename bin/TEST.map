@@ -2,55 +2,66 @@ Section          Base   Top    High   Length
 ---------------- ------ ------ ------ -------
 .icon            D1A882 D1A89B            19h
 .init.libs       D1A89B D1A8F3            58h
-.libs            D1A8F3 D1A922            2Fh
-.init.clock      D1A922 D1A922             0h
-.init.reruncheck D1A922 D1A922             0h
-.init            D1A922 D1A942            20h
-.fini            D1A942 D1A976            34h
-.text            D1A976 D1AA7E           108h
-.data            D1AA7E D1AA8A             Ch
-.rodata          D1AA8A D1AAAC            22h
+.libs            D1A8F3 D1A930            3Dh
+.init.clock      D1A930 D1A930             0h
+.init.reruncheck D1A930 D1A930             0h
+.init            D1A930 D1A957            27h
+.fini            D1A957 D1A98B            34h
+.text            D1A98B D1AC3B           2B0h
+.data            D1AC3B D1AC4A             Fh
+.rodata          D1AC4A D1AC6C            22h
 .init_array      000000 000000             0h
 .ctors           000000 000000             0h
 .dtors           000000 000000             0h
 .fini_array      000000 000000             0h
-.bss             D052C6 D052C6 D13FD8      0h
+.bss             D052C6 D052C9 D13FD8      3h
 .header          D1A87F D1A882             3h
 
 Label                        Value
 --------------------------   ------
 ___low_bss                 = D052C6
-___len_bss                 = 000000
+___len_bss                 = 000003
 ___heaptop                 = D13FD8
-___heapbot                 = D052C6
+___heapbot                 = D052C9
 ___libs                    = D1A8F3
 ___init_array_count        = 000000
 ___ctors_count             = 000000
 ___dtors_count             = 000000
 ___fini_array_count        = 000000
 __stack                    = D1A87E
-__ineg                     = D1A976
-_os_DisableHomeTextBuffer  = D1A97F
-_os_EnableHomeTextBuffer   = D1A991
-_os_GetCSC                 = 021D3C
-.missingappvar             = D1AA8A
-.libloadname               = D1AA8F
+__bshru                    = D1A98B
+__frameset                 = D1A995
+__ineg                     = D1A9A3
+__ftol                     = 00027C
+__ftoul                    = 00027C
+__ltof                     = 000284
+__setflag                  = 000218
+__ultof                    = 000280
+_os_DisableHomeTextBuffer  = D1A9AC
+_os_EnableHomeTextBuffer   = D1A9BE
+.missingappvar             = D1AC4A
+.libloadname               = D1AC4F
 .libloadnamelen            = 000007
-.webaddress                = D1AA97
-__start                    = D1A922
-___exithl                  = D1A942
-skip._exit                 = D1A942
-skip.__Exit                = D1A942
-skip._abort                = D1A942
-_exit.sp                   = D1A943
-_exit.flash_wait_states    = D1A94D
-_draw                      = D1A9A3
-_gametick                  = D1A9E6
-_main                      = D1AA53
-_ballpx                    = D1AA7E
-_ballpy                    = D1AA81
-_ballxmod                  = D1AA84
-_ballymod                  = D1AA87
+.webaddress                = D1AC57
+__start                    = D1A930
+___exithl                  = D1A957
+skip._exit                 = D1A957
+skip.__Exit                = D1A957
+skip._abort                = D1A957
+_exit.sp                   = D1A958
+_exit.flash_wait_states    = D1A962
+_draw                      = D1A9D0
+_gametick                  = D1AAA0
+_kctick                    = D1ABC6
+_main                      = D1AC0B
+_ballpx                    = D1AC3B
+_ballpy                    = D1AC3E
+_ballxmod                  = D1AC41
+_ballymod                  = D1AC44
+_paddley                   = D1AC47
+_ccd                       = D052C6
+_k_dw                      = D052C7
+_k_up                      = D052C8
 lib.LibLoad                = D1A8F3
 _#gfx_Begin                = D1A906
 _#gfx_End                  = D1A90A
@@ -59,3 +70,4 @@ _#gfx_SetDraw              = D1A912
 _#gfx_SwapDraw             = D1A916
 _#gfx_FillRectangle        = D1A91A
 _#gfx_FillRectangle_NoClip = D1A91E
+_#kb_Scan                  = D1A92C

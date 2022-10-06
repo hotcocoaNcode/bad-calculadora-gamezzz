@@ -3,6 +3,8 @@
 	section	.text,"ax",@progbits
 	public	_draw
 _draw:
+	ld	hl, -3
+	call	__frameset
 	or	a, a
 	sbc	hl, hl
 	push	hl
@@ -21,8 +23,41 @@ _draw:
 	pop	hl
 	pop	hl
 	pop	hl
-	scf
-	sbc	hl, hl
+	ld	iy, (_ballpy)
+	lea	hl, iy
+	ld	de, 30
+	add	hl, de
+	ld	(ix - 3), hl
+	ld	bc, (_paddley)
+	ld	de, 10
+	add	iy, de
+	push	bc
+	pop	hl
+	ld	de, (ix - 3)
+	or	a, a
+	sbc	hl, de
+	call	pe, __setflag
+	ld	e, -1
+	ld	d, 0
+	ld	a, e
+	jp	m, BB0_2
+	ld	a, d
+BB0_2:
+	lea	hl, iy
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	m, BB0_4
+	ld	e, d
+BB0_4:
+	or	a, e
+	bit	0, a
+	jr	nz, BB0_6
+	ld	l, -1
+	jr	BB0_7
+BB0_6:
+	ld	l, 31
+BB0_7:
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -38,36 +73,98 @@ _draw:
 	pop	hl
 	pop	hl
 	pop	hl
+	ld	hl, (_paddley)
+	ld	de, 30
+	push	de
+	ld	de, 5
+	push	de
+	push	hl
+	ld	hl, 40
+	push	hl
+	call	_gfx_FillRectangle
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (_ballpy)
+	ld	de, -15
+	add	hl, de
+	ld	de, 30
+	push	de
+	ld	de, 5
+	push	de
+	push	hl
+	ld	hl, 280
+	push	hl
+	call	_gfx_FillRectangle
+	ld	sp, ix
+	pop	ix
 	ret
 	section	.text,"ax",@progbits
 
 	section	.text,"ax",@progbits
 	public	_gametick
 _gametick:
+	ld	hl, -9
+	call	__frameset
 	ld	de, (_ballpx)
 	push	de
 	pop	bc
 	dec	bc
-	ld	iy, (_ballxmod)
+	ld	iy, 269
 	push	bc
 	pop	hl
-	ld	bc, 309
+	lea	bc, iy
 	or	a, a
 	sbc	hl, bc
-	jr	nc, BB1_2
-	add	iy, de
-	jr	BB1_3
-BB1_2:
-	lea	hl, iy
+	jr	nc, BB1_3
+	ld	bc, 46
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jr	c, BB1_5
+	ld	iy, (_ballxmod)
+	jr	BB1_7
+BB1_3:
+	ld	bc, (_ballxmod)
+	push	bc
+	pop	hl
 	call	__ineg
 	ld	(_ballxmod), hl
 	ex	de, hl
-	lea	de, iy
 	or	a, a
-	sbc	hl, de
+	sbc	hl, bc
+BB1_4:
 	push	hl
 	pop	iy
-BB1_3:
+	jr	BB1_8
+BB1_5:
+	ld	bc, 30
+	ld	iy, (_ballpy)
+	lea	hl, iy
+	add	hl, bc
+	ld	(ix - 3), hl
+	ld	hl, (_paddley)
+	ld	bc, 10
+	add	iy, bc
+	ld	(ix - 6), iy
+	ld	iy, (_ballxmod)
+	ld	(ix - 9), hl
+	ld	bc, (ix - 3)
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	m, BB1_7
+	ld	hl, (ix - 6)
+	ld	bc, (ix - 9)
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	p, BB1_18
+BB1_7:
+	add	iy, de
+BB1_8:
 	ld	(_ballpx), iy
 	ld	de, (_ballpy)
 	push	de
@@ -79,10 +176,10 @@ BB1_3:
 	ld	bc, 229
 	or	a, a
 	sbc	hl, bc
-	jr	nc, BB1_5
+	jr	nc, BB1_10
 	add	iy, de
-	jr	BB1_6
-BB1_5:
+	jr	BB1_11
+BB1_10:
 	lea	hl, iy
 	call	__ineg
 	ld	(_ballymod), hl
@@ -92,8 +189,91 @@ BB1_5:
 	sbc	hl, de
 	push	hl
 	pop	iy
-BB1_6:
+BB1_11:
 	ld	(_ballpy), iy
+	ld	de, (_paddley)
+	ld	a, (_k_dw)
+	ld	bc, 210
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	p, BB1_14
+	or	a, a
+	jr	z, BB1_14
+	inc	de
+	ld	(_paddley), de
+BB1_14:
+	ld	a, (_k_up)
+	ld	bc, 1
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	m, BB1_17
+	or	a, a
+	jr	z, BB1_17
+	dec	de
+	ld	(_paddley), de
+BB1_17:
+	ld	sp, ix
+	pop	ix
+	ret
+BB1_18:
+	lea	hl, iy
+	call	__ineg
+	ld	(_ballxmod), hl
+	ex	de, hl
+	lea	de, iy
+	or	a, a
+	sbc	hl, de
+	jp	BB1_4
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_kctick
+_kctick:
+	call	_kb_Scan
+	ld	hl, -720866
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	ld	b, 3
+	call	__bshru
+	and	a, 1
+	ld	(_k_up), a
+	ld	hl, -720866
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	and	a, 1
+	ld	(_k_dw), a
+	ld	hl, -720868
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	bit	6, a
+	jr	z, BB2_2
+	ld	a, 1
+	ld	(_ccd), a
+BB2_2:
 	ret
 	section	.text,"ax",@progbits
 
@@ -105,15 +285,16 @@ _main:
 	push	hl
 	call	_gfx_SetDraw
 	pop	hl
-BB2_1:
-	call	_os_GetCSC
-	or	a, a
-	jr	nz, BB2_3
+BB3_1:
+	ld	a, (_ccd)
+	bit	0, a
+	jr	nz, BB3_3
 	call	_draw
 	call	_gfx_SwapDraw
 	call	_gametick
-	jr	BB2_1
-BB2_3:
+	call	_kctick
+	jr	BB3_1
+BB3_3:
 	call	_gfx_End
 	or	a, a
 	sbc	hl, hl
@@ -140,15 +321,48 @@ _ballxmod:
 _ballymod:
 	dl	1
 
+	section	.data,"aw",@progbits
+	public	_paddley
+_paddley:
+	dl	120
+
+	section	.bss,"aw",@nobits
+	public	_prevk_dw
+_prevk_dw:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_ccd
+_ccd:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_k_dw
+_k_dw:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_k_up
+_k_up:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_prevk_up
+_prevk_up:
+	rb	1
+
 	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 6d9aa7a16db70f3d02ae304b08d4a03011281fef)"
 	extern	__Unwind_SjLj_Register
-	extern	__Unwind_SjLj_Unregister
-	extern	_gfx_FillRectangle
+	extern	__frameset
 	extern	_gfx_FillRectangle_NoClip
 	extern	_gfx_Begin
+	extern	_kb_Scan
+	extern	_gfx_SwapDraw
+	extern	_gfx_SetDraw
+	extern	__setflag
+	extern	__Unwind_SjLj_Unregister
+	extern	_gfx_FillRectangle
 	extern	_gfx_SetColor
 	extern	__ineg
 	extern	_gfx_End
-	extern	_os_GetCSC
-	extern	_gfx_SwapDraw
-	extern	_gfx_SetDraw
+	extern	__bshru
