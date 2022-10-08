@@ -1,6 +1,8 @@
 #include <ti/getcsc.h>
 #include <graphx.h>
 #include <keypadc.h>
+#include <ti/screen.h>
+
 
 int ballpx = GFX_LCD_WIDTH / 2;
 int ballpy = GFX_LCD_HEIGHT / 2;
@@ -9,16 +11,14 @@ int ballymod = 1;
 int paddley = GFX_LCD_HEIGHT / 2;
 bool k_up, prevk_up, k_dw, prevk_dw = false;
 bool ccd = false;
+bool lost = false;
 
 void draw()
 {
 
     gfx_SetColor(0);
     gfx_FillRectangle_NoClip(0, 0, GFX_LCD_WIDTH, GFX_LCD_HEIGHT); // overdocumenting
-    if (ballpy + 30 < paddley || ballpy + 10 > paddley){
-        gfx_SetColor(31);
-    }else{gfx_SetColor(255);}// wow really wonder what this does almost as if it sets the color to a number of 255 which seems to be white
-     
+    gfx_SetColor(255);// wow really wonder what this does almost as if it sets the color to a number of 255 which seems to be white
     gfx_FillRectangle(ballpx, ballpy, 10, 10); // ball
     gfx_FillRectangle(40, paddley, 5, 30); // human paddle
     gfx_FillRectangle(GFX_LCD_WIDTH - 40, ballpy - 15, 5, 30); // ai paddle
@@ -31,15 +31,17 @@ void gametick() {
            ballpx = ballxmod + ballpx;
 
         }else{
-
-           if (ballpy + 30 > paddley || ballpy + 10 < paddley){
+           if (ballpx < 35) {
+               ccd = true;
+               lost = true;
+           }
+           if (ballpy > paddley + 30 || ballpy + 10 < paddley){
 
                 ballpx = ballxmod + ballpx;
 
            }else{
 
                 ballxmod = ballxmod * -1;
-
                 ballpx = ballxmod + ballpx;
 
            }
@@ -60,13 +62,13 @@ void gametick() {
 
     if (paddley + 30 < GFX_LCD_HEIGHT){
         if (k_dw){
-            paddley = paddley + 1;
+            paddley = paddley + 2;
         }
     }
 
     if (paddley > 0){
         if (k_up){
-            paddley = paddley - 1;
+            paddley = paddley - 2;
         }
     }
 };
@@ -122,6 +124,15 @@ int main(void)
     }
 
     gfx_End();
+
+    os_ClrHome();
+    if (lost) {
+        os_PutStrFull("You lost...");
+        os_NewLine();
+        os_PutStrFull("Press any key to exit");
+    }
+    
+    while (!os_GetCSC());
 
     return 0;
 }

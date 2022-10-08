@@ -2,9 +2,9 @@
 # Makefile Options
 # ----------------------------
 
-NAME = TEST
-ICON = icon.png
-DESCRIPTION = "CE C Toolchain Demo"
+NAME = PONK
+ICON = ponglogo.png
+DESCRIPTION = "pong by cocoa (@hotcocoaNcode gh)"
 COMPRESSED = NO
 ARCHIVED = NO
 

@@ -3,8 +3,6 @@
 	section	.text,"ax",@progbits
 	public	_draw
 _draw:
-	ld	hl, -3
-	call	__frameset
 	or	a, a
 	sbc	hl, hl
 	push	hl
@@ -23,41 +21,8 @@ _draw:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	iy, (_ballpy)
-	lea	hl, iy
-	ld	de, 30
-	add	hl, de
-	ld	(ix - 3), hl
-	ld	bc, (_paddley)
-	ld	de, 10
-	add	iy, de
-	push	bc
-	pop	hl
-	ld	de, (ix - 3)
-	or	a, a
-	sbc	hl, de
-	call	pe, __setflag
-	ld	e, -1
-	ld	d, 0
-	ld	a, e
-	jp	m, BB0_2
-	ld	a, d
-BB0_2:
-	lea	hl, iy
-	or	a, a
-	sbc	hl, bc
-	call	pe, __setflag
-	jp	m, BB0_4
-	ld	e, d
-BB0_4:
-	or	a, e
-	bit	0, a
-	jr	nz, BB0_6
-	ld	l, -1
-	jr	BB0_7
-BB0_6:
-	ld	l, 31
-BB0_7:
+	scf
+	sbc	hl, hl
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -97,8 +62,10 @@ BB0_7:
 	ld	hl, 280
 	push	hl
 	call	_gfx_FillRectangle
-	ld	sp, ix
-	pop	ix
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
 	ret
 	section	.text,"ax",@progbits
 
@@ -125,7 +92,7 @@ _gametick:
 	sbc	hl, bc
 	jr	c, BB1_5
 	ld	iy, (_ballxmod)
-	jr	BB1_7
+	jr	BB1_9
 BB1_3:
 	ld	bc, (_ballxmod)
 	push	bc
@@ -138,33 +105,43 @@ BB1_3:
 BB1_4:
 	push	hl
 	pop	iy
-	jr	BB1_8
+	jr	BB1_10
 BB1_5:
-	ld	bc, 30
-	ld	iy, (_ballpy)
-	lea	hl, iy
-	add	hl, bc
+	ld	bc, 35
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jr	nc, BB1_7
+	ld	a, 1
+	ld	(_ccd), a
+	ld	(_lost), a
+BB1_7:
+	ld	hl, (_ballpy)
 	ld	(ix - 3), hl
 	ld	hl, (_paddley)
+	ld	(ix - 6), hl
+	ld	bc, 30
+	add	hl, bc
+	ld	iy, (ix - 3)
 	ld	bc, 10
 	add	iy, bc
-	ld	(ix - 6), iy
+	ld	(ix - 9), iy
 	ld	iy, (_ballxmod)
-	ld	(ix - 9), hl
 	ld	bc, (ix - 3)
 	or	a, a
 	sbc	hl, bc
 	call	pe, __setflag
-	jp	m, BB1_7
-	ld	hl, (ix - 6)
-	ld	bc, (ix - 9)
+	jp	m, BB1_9
+	ld	hl, (ix - 9)
+	ld	bc, (ix - 6)
 	or	a, a
 	sbc	hl, bc
 	call	pe, __setflag
-	jp	p, BB1_18
-BB1_7:
+	jp	p, BB1_20
+BB1_9:
 	add	iy, de
-BB1_8:
+BB1_10:
 	ld	(_ballpx), iy
 	ld	de, (_ballpy)
 	push	de
@@ -176,10 +153,10 @@ BB1_8:
 	ld	bc, 229
 	or	a, a
 	sbc	hl, bc
-	jr	nc, BB1_10
+	jr	nc, BB1_12
 	add	iy, de
-	jr	BB1_11
-BB1_10:
+	jr	BB1_13
+BB1_12:
 	lea	hl, iy
 	call	__ineg
 	ld	(_ballymod), hl
@@ -189,39 +166,39 @@ BB1_10:
 	sbc	hl, de
 	push	hl
 	pop	iy
-BB1_11:
+BB1_13:
 	ld	(_ballpy), iy
-	ld	de, (_paddley)
+	ld	iy, (_paddley)
 	ld	a, (_k_dw)
-	ld	bc, 210
-	push	de
-	pop	hl
+	ld	de, 210
+	lea	hl, iy
 	or	a, a
-	sbc	hl, bc
+	sbc	hl, de
 	call	pe, __setflag
-	jp	p, BB1_14
+	jp	p, BB1_16
 	or	a, a
-	jr	z, BB1_14
-	inc	de
-	ld	(_paddley), de
-BB1_14:
+	jr	z, BB1_16
+	ld	de, 2
+	add	iy, de
+	ld	(_paddley), iy
+BB1_16:
 	ld	a, (_k_up)
-	ld	bc, 1
-	push	de
-	pop	hl
+	ld	de, 1
+	lea	hl, iy
 	or	a, a
-	sbc	hl, bc
+	sbc	hl, de
 	call	pe, __setflag
-	jp	m, BB1_17
+	jp	m, BB1_19
 	or	a, a
-	jr	z, BB1_17
-	dec	de
-	ld	(_paddley), de
-BB1_17:
+	jr	z, BB1_19
+	ld	de, -2
+	add	iy, de
+	ld	(_paddley), iy
+BB1_19:
 	ld	sp, ix
 	pop	ix
 	ret
-BB1_18:
+BB1_20:
 	lea	hl, iy
 	call	__ineg
 	ld	(_ballxmod), hl
@@ -296,6 +273,27 @@ BB3_1:
 	jr	BB3_1
 BB3_3:
 	call	_gfx_End
+	ld	iy, -3145600
+	call	_os_ClrLCD
+	call	_os_HomeUp
+	call	_os_DrawStatusBar
+	ld	a, (_lost)
+	bit	0, a
+	jr	z, BB3_5
+	ld	hl, _.str
+	push	hl
+	call	_os_PutStrFull
+	pop	hl
+	ld	iy, -3145600
+	call	_os_NewLine
+	ld	hl, _.str.1
+	push	hl
+	call	_os_PutStrFull
+	pop	hl
+BB3_5:
+	call	_os_GetCSC
+	or	a, a
+	jr	z, BB3_5
 	or	a, a
 	sbc	hl, hl
 	ret
@@ -337,6 +335,11 @@ _ccd:
 	rb	1
 
 	section	.bss,"aw",@nobits
+	public	_lost
+_lost:
+	rb	1
+
+	section	.bss,"aw",@nobits
 	public	_k_dw
 _k_dw:
 	rb	1
@@ -345,6 +348,16 @@ _k_dw:
 	public	_k_up
 _k_up:
 	rb	1
+
+	section	.rodata,"a",@progbits
+	private	_.str
+_.str:
+	db	"You lost...", 0
+
+	section	.rodata,"a",@progbits
+	private	_.str.1
+_.str.1:
+	db	"Press any key to exit", 0
 
 	section	.bss,"aw",@nobits
 	public	_prevk_up
@@ -357,12 +370,18 @@ _prevk_up:
 	extern	_gfx_FillRectangle_NoClip
 	extern	_gfx_Begin
 	extern	_kb_Scan
+	extern	_os_ClrLCD
 	extern	_gfx_SwapDraw
+	extern	_os_DrawStatusBar
 	extern	_gfx_SetDraw
 	extern	__setflag
 	extern	__Unwind_SjLj_Unregister
 	extern	_gfx_FillRectangle
+	extern	_os_PutStrFull
 	extern	_gfx_SetColor
+	extern	_os_NewLine
 	extern	__ineg
 	extern	_gfx_End
+	extern	_os_GetCSC
 	extern	__bshru
+	extern	_os_HomeUp
