@@ -2,14 +2,14 @@ Section          Base   Top    High   Length
 ---------------- ------ ------ ------ -------
 .icon            D1A882 D1A8AB            29h
 .init.libs       D1A8AB D1A903            58h
-.libs            D1A903 D1A93C            39h
-.init.clock      D1A93C D1A93C             0h
-.init.reruncheck D1A93C D1A93C             0h
-.init            D1A93C D1A968            2Ch
-.fini            D1A968 D1A99C            34h
-.text            D1A99C D1B041           6A5h
-.data            D1B041 D1B045             4h
-.rodata          D1B045 D1B089            44h
+.libs            D1A903 D1A940            3Dh
+.init.clock      D1A940 D1A940             0h
+.init.reruncheck D1A940 D1A940             0h
+.init            D1A940 D1A96C            2Ch
+.fini            D1A96C D1A9A0            34h
+.text            D1A9A0 D1B546           BA6h
+.data            D1B546 D1B550             Ah
+.rodata          D1B550 D1B594            44h
 .init_array      000000 000000             0h
 .ctors           000000 000000             0h
 .dtors           000000 000000             0h
@@ -17,79 +17,89 @@ Section          Base   Top    High   Length
 .bss             D052C6 D05E18 D13FD8    B52h
 .header          D1A87F D1A882             3h
 
-Label                        Value
---------------------------   ------
-___low_bss                 = D052C6
-___len_bss                 = 000B52
-___heaptop                 = D13FD8
-___heapbot                 = D05E18
-___libs                    = D1A903
-___init_array_count        = 000000
-___ctors_count             = 000000
-___dtors_count             = 000000
-___fini_array_count        = 000000
-__stack                    = D1A87E
-__bshru                    = D1A99C
-__fneg                     = D1A9A6
-__frameset                 = D1A9B3
-__idivs                    = D1A9C1
-__idvrms                   = D1A9C8
-__idvrmu                   = D1A9F6
-__imulu                    = D1AA0E
-__ineg                     = D1AA3E
-__fadd                     = 000270
-__fdiv                     = 000278
-__fmul                     = 000288
-__ftol                     = 00027C
-__ftoul                    = 00027C
-__ltof                     = 000284
-__setflag                  = 000218
-__ultof                    = 000280
-_os_DisableHomeTextBuffer  = D1AA47
-_os_EnableHomeTextBuffer   = D1AA59
-_os_NewLine                = 0207F0
-_os_ClrLCD                 = 02080C
-_os_HomeUp                 = 020828
-_os_DrawStatusBar          = 021A3C
-_os_PutStrFull             = 021D2C
-_os_GetCSC                 = 021D3C
-_cos                       = 02211C
-_cosf                      = 02211C
-__ishl                     = 000174
-_sinf                      = 022118
-_sin                       = 022118
-.missingappvar             = D1B045
-.libloadname               = D1B04A
-.libloadnamelen            = 000007
-.webaddress                = D1B052
-__start                    = D1A93C
-___exithl                  = D1A968
-skip._exit                 = D1A968
-skip.__Exit                = D1A968
-skip._abort                = D1A968
-_exit.sp                   = D1A969
-_exit.flash_wait_states    = D1A973
-_draw                      = D1AA6B
-_gametick                  = D1AD90
-_kctick                    = D1AE92
-_init                      = D1AEF8
-_main                      = D1AFD0
-_k_rg                      = D052C6
-_ccd                       = D052C7
-_lost                      = D052C8
-_pi                        = D1B041
-_M                         = D052C9
-_P                         = D05E09
-_k_lf                      = D05E15
-_k_up                      = D05E16
-_k_dw                      = D05E17
-_.str                      = D1B067
-_.str.1                    = D1B073
-lib.LibLoad                = D1A903
-_#gfx_Begin                = D1A916
-_#gfx_End                  = D1A91A
-_#gfx_SetColor             = D1A91E
-_#gfx_SetDraw              = D1A922
-_#gfx_SwapDraw             = D1A926
-_#gfx_FillRectangle_NoClip = D1A92A
-_#kb_Scan                  = D1A938
+Label                       Value
+-------------------------   ------
+___low_bss                = D052C6
+___len_bss                = 000B52
+___heaptop                = D13FD8
+___heapbot                = D05E18
+___libs                   = D1A903
+___init_array_count       = 000000
+___ctors_count            = 000000
+___dtors_count            = 000000
+___fini_array_count       = 000000
+__stack                   = D1A87E
+__bshru                   = D1A9A0
+__fneg                    = D1A9AA
+__frameset                = D1A9B7
+__frameset0               = D1A9C5
+__idivs                   = D1A9D0
+__idvrms                  = D1A9D7
+__idvrmu                  = D1AA05
+__imulu                   = D1AA1D
+__ineg                    = D1AA4D
+__ixor                    = D1AA56
+__fadd                    = 000270
+__fdiv                    = 000278
+__fmul                    = 000288
+__fsub                    = 000290
+__ftol                    = 00027C
+__ftoul                   = 00027C
+__ltof                    = 000284
+__setflag                 = 000218
+__ultof                   = 000280
+_os_DisableHomeTextBuffer = D1AA6F
+_os_EnableHomeTextBuffer  = D1AA81
+_os_NewLine               = 0207F0
+_os_ClrLCD                = 02080C
+_os_HomeUp                = 020828
+_os_DrawStatusBar         = 021A3C
+_os_PutStrFull            = 021D2C
+_os_GetCSC                = 021D3C
+_cos                      = 02211C
+_cosf                     = 02211C
+__ishl                    = 000174
+_sinf                     = 022118
+_sin                      = 022118
+.missingappvar            = D1B550
+.libloadname              = D1B555
+.libloadnamelen           = 000007
+.webaddress               = D1B55D
+__start                   = D1A940
+___exithl                 = D1A96C
+skip._exit                = D1A96C
+skip.__Exit               = D1A96C
+skip._abort               = D1A96C
+_exit.sp                  = D1A96D
+_exit.flash_wait_states   = D1A977
+_drawPixel                = D1AA93
+_drawWallLine             = D1AACF
+_clipBehindPlayer         = D1AB38
+_drawWall                 = D1AC85
+_draw                     = D1AEF6
+_gametick                 = D1B295
+_kctick                   = D1B397
+_init                     = D1B3FD
+_main                     = D1B4D5
+_k_rg                     = D052C6
+_ccd                      = D052C7
+_lost                     = D052C8
+_pi                       = D1B546
+_SCWIDTH                  = D1B54A
+_SCHEIGHT                 = D1B54D
+_M                        = D052C9
+_P                        = D05E09
+_k_lf                     = D05E15
+_k_up                     = D05E16
+_k_dw                     = D05E17
+_.str                     = D1B572
+_.str.1                   = D1B57E
+lib.LibLoad               = D1A903
+_#gfx_Begin               = D1A916
+_#gfx_End                 = D1A91A
+_#gfx_SetColor            = D1A91E
+_#gfx_SetDraw             = D1A922
+_#gfx_SwapDraw            = D1A926
+_#gfx_FillRectangle       = D1A92A
+_#gfx_ZeroScreen          = D1A92E
+_#kb_Scan                 = D1A93C
