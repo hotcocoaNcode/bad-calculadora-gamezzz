@@ -1,0 +1,465 @@
+	section	.text,"ax",@progbits
+	assume	adl = 1
+	section	.text,"ax",@progbits
+	public	_drawPixel
+_drawPixel:
+	call	__frameset0
+	ld	a, (ix + 12)
+	ld	l, a
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, (ix + 6)
+	ld	bc, 5
+	call	__imulu
+	push	hl
+	pop	iy
+	ld	de, 2
+	add	iy, de
+	ld	hl, (ix + 9)
+	call	__imulu
+	add	hl, de
+	ld	de, 5
+	push	de
+	push	de
+	push	hl
+	push	iy
+	call	_gfx_FillRectangle
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_drawMap2D
+_drawMap2D:
+	ld	hl, -6
+	call	__frameset
+	ld	iy, 0
+	lea	hl, iy
+BB1_1:
+	ld	de, (_mapY)
+	ld	(ix - 3), hl
+	or	a, a
+	sbc	hl, de
+	call	pe, __setflag
+	lea	de, iy
+	jp	p, BB1_7
+BB1_2:
+	ld	bc, (_mapX)
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	pe, __setflag
+	jp	p, BB1_6
+	ld	hl, (ix - 3)
+	call	__imulu
+	push	de
+	pop	bc
+	push	hl
+	pop	de
+	ld	(ix - 6), bc
+	push	bc
+	pop	hl
+	add	hl, de
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _map
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	ld	hl, -1
+	jr	z, BB1_5
+	ld	hl, 0
+BB1_5:
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	de, (_mapS)
+	push	de
+	pop	hl
+	ld	bc, (ix - 6)
+	call	__imulu
+	push	hl
+	pop	iy
+	push	de
+	pop	hl
+	ld	bc, (ix - 3)
+	call	__imulu
+	push	de
+	push	de
+	push	hl
+	push	iy
+	call	_gfx_FillRectangle
+	ld	de, (ix - 6)
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	inc	de
+	ld	iy, 0
+	jr	BB1_2
+BB1_6:
+	ld	hl, (ix - 3)
+	inc	hl
+	jp	BB1_1
+BB1_7:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_draw
+_draw:
+	ld	hl, 9
+	push	hl
+	call	_gfx_FillScreen
+	pop	hl
+	jp	_drawMap2D
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_gametick
+_gametick:
+	ld	iy, _px
+	ld	hl, 4194304
+	ld	d, -64
+	ld	a, (_k_lf)
+	bit	0, a
+	lea	iy, iy + 3
+	jr	z, BB3_2
+	ld	bc, (_px)
+	ld	a, (iy)
+	ld	e, d
+	call	__fadd
+	ld	(_px), bc
+	ld	(_px+3), a
+BB3_2:
+	ld	a, (_k_rg)
+	bit	0, a
+	jr	z, BB3_4
+	ld	bc, (_px)
+	ld	a, (iy)
+	ld	e, 64
+	call	__fadd
+	ld	(_px), bc
+	ld	(_px+3), a
+BB3_4:
+	ld	a, (_k_up)
+	bit	0, a
+	ld	iy, _py
+	lea	iy, iy + 3
+	jr	z, BB3_6
+	ld	bc, (_py)
+	ld	a, (iy)
+	ld	e, d
+	call	__fadd
+	ld	(_py), bc
+	ld	(_py+3), a
+BB3_6:
+	ld	a, (_k_dw)
+	bit	0, a
+	jr	z, BB3_8
+	ld	bc, (_py)
+	ld	a, (iy)
+	ld	e, 64
+	call	__fadd
+	ld	(_py), bc
+	ld	(_py+3), a
+BB3_8:
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_kctick
+_kctick:
+	call	_kb_Scan
+	ld	hl, -720866
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	ld	b, 3
+	call	__bshru
+	and	a, 1
+	ld	(_k_up), a
+	ld	iy, -720866
+	ld	l, (iy)
+	ld	h, (iy + 1)
+	ld	a, l
+	and	a, 1
+	ld	(_k_dw), a
+	ld	l, (iy)
+	ld	h, (iy + 1)
+	ld	a, l
+	srl	a
+	and	a, 1
+	ld	(_k_lf), a
+	ld	l, (iy)
+	ld	h, (iy + 1)
+	ld	a, l
+	dec	b
+	call	__bshru
+	and	a, 1
+	ld	(_k_rg), a
+	ld	hl, -720868
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	bit	6, a
+	jr	z, BB4_2
+	ld	a, 1
+	ld	(_ccd), a
+BB4_2:
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_init
+_init:
+	call	_gfx_Begin
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetDraw
+	pop	hl
+	ld	hl, -6946816
+	ld	(_px), hl
+	ld	a, 67
+	ld	(_px+3), a
+	ld	(_py), hl
+	ld	(_py+3), a
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_main
+_main:
+	call	_init
+BB6_1:
+	ld	a, (_ccd)
+	bit	0, a
+	jr	nz, BB6_3
+	call	_draw
+	call	_gfx_SwapDraw
+	call	_gametick
+	call	_kctick
+	jr	BB6_1
+BB6_3:
+	call	_gfx_End
+	ld	iy, -3145600
+	call	_os_ClrLCD
+	call	_os_HomeUp
+	call	_os_DrawStatusBar
+	ld	a, (_lost)
+	bit	0, a
+	jr	z, BB6_5
+	ld	hl, _.str
+	push	hl
+	call	_os_PutStrFull
+	pop	hl
+	ld	iy, -3145600
+	call	_os_NewLine
+	ld	hl, _.str.1
+	push	hl
+	call	_os_PutStrFull
+	pop	hl
+BB6_5:
+	call	_os_GetCSC
+	or	a, a
+	jr	z, BB6_5
+	or	a, a
+	sbc	hl, hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.bss,"aw",@nobits
+	public	_k_rg
+_k_rg:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_ccd
+_ccd:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_lost
+_lost:
+	rb	1
+
+	section	.data,"aw",@progbits
+	public	_pi
+_pi:
+	dd	0x40490fd0
+
+	section	.data,"aw",@progbits
+	public	_SCWIDTH
+_SCWIDTH:
+	dl	106
+
+	section	.data,"aw",@progbits
+	public	_SCHEIGHT
+_SCHEIGHT:
+	dl	48
+
+	section	.data,"aw",@progbits
+	public	_SCALEFACTOR
+_SCALEFACTOR:
+	dl	5
+
+	section	.data,"aw",@progbits
+	public	_mapX
+_mapX:
+	dl	8
+
+	section	.data,"aw",@progbits
+	public	_mapY
+_mapY:
+	dl	8
+
+	section	.data,"aw",@progbits
+	public	_mapS
+_mapS:
+	dl	10
+
+	section	.data,"aw",@progbits
+	public	_map
+_map:
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+	dl	0
+	dl	1
+	dl	0
+	dl	0
+	dl	0
+	dl	0
+	dl	1
+	dl	1
+	dl	0
+	dl	1
+	dl	0
+	dl	0
+	dl	0
+	dl	0
+	dl	1
+	dl	1
+	dl	0
+	dl	1
+	dl	0
+	dl	0
+	dl	0
+	dl	0
+	dl	1
+	dl	1
+	dl	0
+	dl	0
+	dl	0
+	dl	0
+	dl	0
+	dl	0
+	dl	1
+	dl	1
+	dl	0
+	dl	0
+	dl	0
+	dl	0
+	dl	1
+	dl	0
+	dl	1
+	dl	1
+	dl	0
+	dl	0
+	dl	0
+	dl	0
+	dl	0
+	dl	0
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+	dl	1
+
+	section	.bss,"aw",@nobits
+	public	_k_lf
+_k_lf:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_px
+_px:
+	rb	4
+
+	section	.bss,"aw",@nobits
+	public	_k_up
+_k_up:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_py
+_py:
+	rb	4
+
+	section	.bss,"aw",@nobits
+	public	_k_dw
+_k_dw:
+	rb	1
+
+	section	.rodata,"a",@progbits
+	private	_.str
+_.str:
+	db	"You lost...", 0
+
+	section	.rodata,"a",@progbits
+	private	_.str.1
+_.str.1:
+	db	"Press any key to exit", 0
+
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 6d9aa7a16db70f3d02ae304b08d4a03011281fef)"
+	extern	__Unwind_SjLj_Register
+	extern	__frameset
+	extern	_gfx_Begin
+	extern	__fadd
+	extern	_kb_Scan
+	extern	_os_ClrLCD
+	extern	_os_DrawStatusBar
+	extern	_gfx_SwapDraw
+	extern	_gfx_SetDraw
+	extern	__setflag
+	extern	_gfx_FillScreen
+	extern	__Unwind_SjLj_Unregister
+	extern	_gfx_FillRectangle
+	extern	_os_PutStrFull
+	extern	__imulu
+	extern	_gfx_SetColor
+	extern	_os_NewLine
+	extern	_os_GetCSC
+	extern	_gfx_End
+	extern	__bshru
+	extern	__frameset0
+	extern	_os_HomeUp
