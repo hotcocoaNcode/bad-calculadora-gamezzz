@@ -2,81 +2,99 @@ Section          Base   Top    High   Length
 ---------------- ------ ------ ------ -------
 .icon            D1A882 D1A8B2            30h
 .init.libs       D1A8B2 D1A90A            58h
-.libs            D1A90A D1A947            3Dh
-.init.clock      D1A947 D1A947             0h
-.init.reruncheck D1A947 D1A947             0h
-.init            D1A947 D1A971            2Ah
-.fini            D1A971 D1A9A5            34h
-.text            D1A9A5 D1AC4E           2A9h
-.data            D1AC4E D1AD17            C9h
-.rodata          D1AD17 D1AD5B            44h
+.libs            D1A90A D1A94B            41h
+.init.clock      D1A94B D1A94B             0h
+.init.reruncheck D1A94B D1A94B             0h
+.init            D1A94B D1A975            2Ah
+.fini            D1A975 D1A9A9            34h
+.text            D1A9A9 D1B50F           B66h
+.data            D1B50F D1B5D8            C9h
+.rodata          D1B5D8 D1B61C            44h
 .init_array      000000 000000             0h
 .ctors           000000 000000             0h
 .dtors           000000 000000             0h
 .fini_array      000000 000000             0h
-.bss             D052C6 D052D4 D13FD8      Eh
+.bss             D052C6 D052E0 D13FD8     1Ah
 .header          D1A87F D1A882             3h
 
 Label                       Value
 -------------------------   ------
 ___low_bss                = D052C6
-___len_bss                = 00000E
+___len_bss                = 00001A
 ___heaptop                = D13FD8
-___heapbot                = D052D4
+___heapbot                = D052E0
 ___libs                   = D1A90A
 ___init_array_count       = 000000
 ___ctors_count            = 000000
 ___dtors_count            = 000000
 ___fini_array_count       = 000000
 __stack                   = D1A87E
-__bshru                   = D1A9A5
-__frameset                = D1A9AF
-__imulu                   = D1A9BD
+__bshru                   = D1A9A9
+__fneg                    = D1A9B3
+__frameset                = D1A9C0
+__iand                    = D1A9CE
+__imulu                   = D1A9E7
 __fadd                    = 000270
+__fcmp                    = 000274
+__fdiv                    = 000278
+__fmul                    = 000288
+__fsub                    = 000290
 __ftol                    = 00027C
 __ftoul                   = 00027C
 __ltof                    = 000284
 __setflag                 = 000218
 __ultof                   = 000280
-_os_DisableHomeTextBuffer = D1A9ED
-_os_EnableHomeTextBuffer  = D1A9FF
+_os_DisableHomeTextBuffer = D1AA17
+_os_EnableHomeTextBuffer  = D1AA29
 _os_NewLine               = 0207F0
 _os_ClrLCD                = 02080C
 _os_HomeUp                = 020828
 _os_DrawStatusBar         = 021A3C
 _os_PutStrFull            = 021D2C
 _os_GetCSC                = 021D3C
-.missingappvar            = D1AD17
-.libloadname              = D1AD1C
+_cos                      = 02211C
+_cosf                     = 02211C
+__ishrs                   = 00017C
+_sinf                     = 022118
+_sin                      = 022118
+_tanf                     = 022120
+_tan                      = 022120
+.missingappvar            = D1B5D8
+.libloadname              = D1B5DD
 .libloadnamelen           = 000007
-.webaddress               = D1AD24
-__start                   = D1A947
-___exithl                 = D1A971
-skip._exit                = D1A971
-skip.__Exit               = D1A971
-skip._abort               = D1A971
-_exit.sp                  = D1A972
-_exit.flash_wait_states   = D1A97C
-_drawMap2D                = D1AA11
-_draw                     = D1AAC1
-_gametick                 = D1AACF
-_kctick                   = D1AB60
-_init                     = D1ABC6
-_main                     = D1ABEB
+.webaddress               = D1B5E5
+__start                   = D1A94B
+___exithl                 = D1A975
+skip._exit                = D1A975
+skip.__Exit               = D1A975
+skip._abort               = D1A975
+_exit.sp                  = D1A976
+_exit.flash_wait_states   = D1A980
+_drawRays3D               = D1AA3B
+_drawMap2D                = D1B0E0
+_drawPlayer               = D1B18E
+_draw                     = D1B1D4
+_gametick                 = D1B1EA
+_kctick                   = D1B3FC
+_init                     = D1B462
+_main                     = D1B4AC
 _k_rg                     = D052C6
 _ccd                      = D052C7
 _lost                     = D052C8
-_mapX                     = D1AC4E
-_mapY                     = D1AC51
-_mapS                     = D1AC54
-_map                      = D1AC57
-_k_lf                     = D052C9
-_px                       = D052CA
-_k_up                     = D052CE
-_py                       = D052CF
-_k_dw                     = D052D3
-_.str                     = D1AD39
-_.str.1                   = D1AD45
+_mapX                     = D1B50F
+_mapY                     = D1B512
+_mapS                     = D1B515
+_map                      = D1B518
+_px                       = D052C9
+_py                       = D052CD
+_pa                       = D052D1
+_k_lf                     = D052D5
+_pdx                      = D052D6
+_pdy                      = D052DA
+_k_up                     = D052DE
+_k_dw                     = D052DF
+_.str                     = D1B5FA
+_.str.1                   = D1B606
 lib.LibLoad               = D1A90A
 _#gfx_Begin               = D1A91D
 _#gfx_End                 = D1A921
@@ -84,5 +102,6 @@ _#gfx_SetColor            = D1A925
 _#gfx_FillScreen          = D1A929
 _#gfx_SetDraw             = D1A92D
 _#gfx_SwapDraw            = D1A931
-_#gfx_FillRectangle       = D1A935
-_#kb_Scan                 = D1A943
+_#gfx_Line                = D1A935
+_#gfx_FillRectangle       = D1A939
+_#kb_Scan                 = D1A947
