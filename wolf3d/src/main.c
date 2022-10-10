@@ -4,22 +4,30 @@
 #include <ti/screen.h>
 #include <math.h>
 
-bool k_up, k_dw, k_lf, k_rg = false;
+bool k_up, k_dw, k_lf, k_rg, k_2n, k_al = false;
 bool ccd = false;
 bool lost = false;
 const float pi = 3.14159;
 const float pi2 = pi / 2;
 const float pi3 = 3 * pi / 2;
+const float degree_rads = 0.017453; // single degree in radians
 
 float px, py, pdx, pdy, pa;
 
-// 11:44 in video 1
+// 12:10 in video 1
 
 // 320x240 -> 106x48
 // Much MUCH more managable for graphics...
 
-int SCWIDTH = 106;
-int SCHEIGHT = 48;
+
+typedef struct {
+    int type; //static, saul, obunga
+    int state;
+    int map;
+}sprite; sprite sp[4];
+
+const int SCWIDTH = 106;
+const int SCHEIGHT = 48;
 int SCALEFACTOR = 5;
 
 void drawPixelScale5(int x, int y, int c) {
@@ -30,15 +38,16 @@ void drawPixelScale5(int x, int y, int c) {
 int mapX = 8, mapY = 8, mapS = 32;
 int map[] =
 {
- 1,1,1,1,1,1,1,1,
- 1,0,1,0,0,0,0,1,
- 1,0,1,0,0,0,0,1,
- 1,0,1,0,0,0,0,1,
- 1,0,0,0,0,0,0,1,
- 1,0,0,0,0,1,0,1,
- 1,0,0,0,0,0,0,1,
- 1,1,1,1,1,1,1,1,
+ 148,148,148,148,148,148,148,148,
+ 148,0,0,0,0,0,0,148,
+ 148,0,0,0,0,0,0,148,
+ 148,0,0,9,9,9,0,148,
+ 148,0,0,9,9,9,0,148,
+ 148,0,0,9,9,0,0,148,
+ 148,0,0,0,0,0,0,148,
+ 148,148,148,148,148,148,148,148,
 };
+
 
 float dist(float ax, float ay, float bx, float by, float ang) {
     //PYTAGORAS TEROEM
@@ -55,13 +64,24 @@ void drawRays3D() {
     float usePX = px * 2, usePY = py * 2;
     
 
-    ra = pa;
-    for (r = 0; r < 1; r++) {
+    
+
+    ra = pa - degree_rads*13;
+    if (ra < 0) {
+        ra += pi * 2;
+    }
+    if (ra > 2 * pi) {
+        ra -= pi * 2;
+    }
+    for (r = 0; r < 27; r++) {
         
         
         //HORIZONTAL CHECK
         dof = 0;
+        float disH = 999999, hx = usePX, hy = usePY;
         float aTan = -1 / tan(ra);
+
+        int walltypeh, walltypev = 0;
 
         if (ra>pi) { //up
             ry = (((int)usePY >> 6) << 6) - 0.0001;
@@ -76,16 +96,20 @@ void drawRays3D() {
             xo = -yo * aTan;
         }
         if (ra == 0 || ra == pi) { // left or right exactly
-            rx = usePX;
-            ry = usePY;
+            rx = 999999;
+            ry = 999999;
             dof = 8;
         }
         while (dof < 8) {
             mx = (int)(rx) >> 6;
             my = (int)(ry) >> 6;
             mp = my * mapX + mx;
-            if (mp > 0 && mp < mapX * mapY && map[mp] == 1) {
+            if (mp > 0 && mp < mapX * mapY && map[mp]>0) {
                 dof = 8;
+                hx = rx;
+                hy = ry;
+                disH = dist(usePX, usePY, rx, ry, pa);
+                walltypeh = map[mp];
             }
             else {
                 rx += xo;
@@ -93,12 +117,11 @@ void drawRays3D() {
                 dof += 1;
             }
         }
-        gfx_SetColor(103);
-        gfx_Line(usePX/2, usePY / 2, rx/2, ry/2);
         
 
         //VERTICAL CHECK
         dof = 0;
+        float disV = 999999, vx = usePX, vy = usePY;
         float nTan = -tan(ra);
 
         if (ra > pi2 && ra<pi3) { //right
@@ -114,16 +137,20 @@ void drawRays3D() {
             yo = -xo * nTan;
         }
         if (ra == 0 || ra == pi) { //up or down exactly
-            ry = usePY;
-            rx = usePX;
+            ry = 999999;
+            rx = 999999;
             dof = 8;
         }
         while (dof < 8) {
             my = (int)(ry) >> 6;
             mx = (int)(rx) >> 6;
             mp = mx * mapY + my;
-            if (mp > 0 && mp < mapY * mapX && map[mp] == 1) {
+            if (mp > 0 && mp < mapY * mapX && map[mp]>0) {
                 dof = 8;
+                vx = rx;
+                vy = ry;
+                disV = dist(usePX, usePY, vx, vy, pa);
+                walltypev = map[mp];
             }
             else {
                 ry += yo;
@@ -131,8 +158,52 @@ void drawRays3D() {
                 dof += 1;
             }
         }
-        gfx_SetColor(224);
-        gfx_Line(usePX / 2, usePY / 2, rx / 2, ry / 2);
+        int disT = 99999;
+        if (disV < disH) {
+            gfx_SetColor(walltypev-1);
+            rx = vx;
+            ry = vy;
+            disT = disV;
+        }
+        if (disH < disV) {
+            gfx_SetColor(walltypeh);
+            rx = hx;
+            ry = hy;
+            disT = disH;
+        }
+        
+        if (k_al) {
+            gfx_SetColor(7);
+            gfx_Line(usePX / 2, usePY / 2, rx / 2, ry / 2);
+        }
+
+        float ca = pa - ra;
+        
+        if (ca < 0) {
+            ca -= 2 * pi;
+        }
+
+        if (ca > 2 * pi) {
+            ca -= 2 * pi;
+        }
+        
+        disT = disT * cos(ca); //anti fisheye
+
+        float lineH = (64 * SCHEIGHT) / disT;
+        if (lineH > SCHEIGHT) {
+            lineH = SCHEIGHT;
+        }
+
+
+
+        gfx_FillRectangle(r * 20, fabsf(lineH - SCHEIGHT), 20, lineH*5);
+        ra += degree_rads * 4;
+        if (ra < 0) {
+            ra += pi * 2;
+        }
+        if (ra > 2 * pi) {
+            ra -= pi * 2;
+        }
     }
 }
 
@@ -141,7 +212,7 @@ void drawMap2D()
     int x, y, xo, yo;
     for (y = 0; y < mapY; y++) {
         for (x = 0; x < mapX; x++) {
-            if (map[y*mapX+x]==1)
+            if (map[y*mapX+x]>0)
             {
                 gfx_SetColor(255);
             }
@@ -162,10 +233,15 @@ void drawPlayer() {
 
 void draw()
 {
-    gfx_FillScreen(74);
-    drawMap2D();
-    drawPlayer();
+    gfx_FillScreen(30);
+    gfx_SetColor(74);
+    gfx_FillRectangle(0, GFX_LCD_HEIGHT * 0.25, GFX_LCD_WIDTH, GFX_LCD_HEIGHT * 0.75);
     drawRays3D();
+
+    if (k_al) {
+        drawMap2D();
+        drawPlayer();
+    }
 };
 
 void gametick() {
@@ -189,14 +265,60 @@ void gametick() {
         pdy = sin(pa) * 5;
     }
 
+
+    int xo = 0;
+    if (pdx < 0) {
+        xo = -20;
+    }
+    else {
+        xo = 20;
+    }
+
+    int yo = 0;
+    if (pdy < 0) {
+        yo = -20;
+    }
+    else {
+        yo = 20;
+    }
+
+    int upx = px * 2;
+    int upy = py * 2;
+
+    int ipx = upx / 64.0, ipx_add_xo = (upx + xo) / 64.0, ipx_sub_xo = (upx - xo) / 64.0;
+    int ipy = upy / 64.0, ipy_add_yo = (upy + yo) / 64.0, ipy_sub_yo = (upy - yo) / 64.0;
+
     if (k_up) {
-        px += pdx;
-        py += pdy;
+        
+        if (map[ipy * mapX + ipx_add_xo] == 0) { px += pdx; }
+        if (map[ipy_add_yo * mapX + ipx] == 0) { py += pdy; }
+        
     }
 
     if (k_dw) {
-        px -= pdx;
-        py -= pdy;
+        if (map[ipy * mapX + ipx_sub_xo] == 0) { px -= pdx; }
+        if (map[ipy_sub_yo * mapX + ipx] == 0) { py -= pdy; }
+    }
+
+    if (pdx < 0) {
+        xo = -30;
+    }
+    else {
+        xo = 30;
+    }
+
+    if (pdy < 0) {
+        yo = -30;
+    }
+    else {
+        yo = 30;
+    }
+
+    ipx = upx / 64.0, ipx_add_xo = (upx + xo) / 64.0;
+    ipy = upy / 64.0, ipy_add_yo = (upy + yo) / 64.0;
+
+    if (k_2n) {
+        if (map[ipy_add_yo * mapX + ipx_add_xo] == 130) { map[ipy_add_yo * mapX + ipx_add_xo] = 0; }
     }
 };
 
@@ -229,6 +351,20 @@ void kctick(){
         k_rg = false;
     }
 
+    if (kb_Data[1] & kb_2nd) {
+        k_2n = true;
+    }
+    else {
+        k_2n = false;
+    }
+
+    if (kb_Data[2] & kb_Alpha) {
+        k_al = true;
+    }
+    else {
+        k_al = false;
+    }
+
     if (kb_Data[6] & kb_Clear) {
     ccd = true;
     }
@@ -237,8 +373,8 @@ void kctick(){
 void init() {
     gfx_Begin();
     gfx_SetDrawBuffer();
-    px = 30;
-    py = 30;
+    px = 40;
+    py = 40;
     pa = 0;
     pdx = cos(pa) * 5;
     pdy = sin(pa) * 5;
@@ -263,9 +399,8 @@ int main()
         os_PutStrFull("You lost...");
         os_NewLine();
         os_PutStrFull("Press any key to exit");
+        while (!os_GetCSC());
     }
     
-    while (!os_GetCSC());
-
     return 0;
 }
