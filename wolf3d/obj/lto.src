@@ -2049,14 +2049,6 @@ _map:
 	dl	9
 	dl	9
 	dl	9
-	dl	130
-	dl	148
-	dl	148
-	dl	0
-	dl	0
-	dl	9
-	dl	9
-	dl	9
 	dl	0
 	dl	148
 	dl	148
@@ -2064,13 +2056,21 @@ _map:
 	dl	0
 	dl	9
 	dl	9
+	dl	9
+	dl	0
+	dl	148
+	dl	148
+	dl	0
+	dl	0
+	dl	9
+	dl	9
 	dl	0
 	dl	0
 	dl	148
 	dl	148
 	dl	0
 	dl	0
-	dl	130
+	dl	0
 	dl	0
 	dl	0
 	dl	0
@@ -2143,6 +2143,11 @@ _.str:
 	private	_.str.1
 _.str.1:
 	db	"Press any key to exit", 0
+
+	section	.bss,"aw",@nobits
+	public	_sp
+_sp:
+	rb	72
 
 	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 6d9aa7a16db70f3d02ae304b08d4a03011281fef)"
 	extern	_fabsf

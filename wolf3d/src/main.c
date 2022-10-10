@@ -14,7 +14,7 @@ const float degree_rads = 0.017453; // single degree in radians
 
 float px, py, pdx, pdy, pa;
 
-// 12:10 in video 1
+// 15:40 in video 3
 
 // 320x240 -> 106x48
 // Much MUCH more managable for graphics...
@@ -24,6 +24,7 @@ typedef struct {
     int type; //static, saul, obunga
     int state;
     int map;
+    int x, y, z;
 }sprite; sprite sp[4];
 
 const int SCWIDTH = 106;
