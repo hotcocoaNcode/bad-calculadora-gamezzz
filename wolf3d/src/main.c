@@ -7,10 +7,10 @@
 bool k_up, k_dw, k_lf, k_rg, k_2n, k_al = false;
 bool ccd = false;
 bool lost = false;
-const float pi = 3.14159;
-const float pi2 = pi / 2;
-const float pi3 = 3 * pi / 2;
-const float degree_rads = 0.017453; // single degree in radians
+#define PI 3.14159
+#define PI2 PI / 2
+#define PI3 3 * PI / 2
+#define DRADS 0.017453 // single degree in radians
 
 float px, py, pdx, pdy, pa;
 
@@ -21,11 +21,11 @@ float px, py, pdx, pdy, pa;
 
 
 typedef struct {
-    int type; //static, saul, obunga
-    int state;
+    int type; //static, item, enemy
+    int state; // enable/disable
     int map;
     int x, y, z;
-}sprite; sprite sp[4];
+}sprite; sprite Saul;
 
 const int SCWIDTH = 106;
 const int SCHEIGHT = 48;
@@ -42,19 +42,76 @@ int map[] =
  148,148,148,148,148,148,148,148,
  148,0,0,0,0,0,0,148,
  148,0,0,0,0,0,0,148,
- 148,0,0,9,9,9,0,148,
+ 148,0,0,9,9,9,130,148,
  148,0,0,9,9,9,0,148,
  148,0,0,9,9,0,0,148,
- 148,0,0,0,0,0,0,148,
+ 148,0,0,130,0,0,0,148,
  148,148,148,148,148,148,148,148,
 };
 
+int SaulTex[] = {
+    74, 42, 65, 97, 97, 97, 97, 97, 97, 97, 97,97,97,196, 197, 229, 229,
+74, 42, 65, 97, 97, 97, 237, 237,237, 237, 237,97,97,196, 197, 229, 229,
+74, 42, 97, 237, 97, 237, 237, 237,237, 237, 237,97,97,97, 197, 229, 229,
+74, 42, 97, 237, 238, 237, 237, 237,237, 237, 237,97,97,97, 197, 229, 229,
+74, 42, 97, 237, 238, 238, 237, 237,237, 237, 237,237,237,97, 197, 229, 229,
+74, 42, 97, 237, 238, 237, 237, 237,237, 237, 237,237,237,97, 197, 229, 229,
+74, 42, 97, 237, 33, 0, 33, 237,237, 237, 33,0,33,97, 197, 229,229,
+74, 42, 97, 237, 238, 237, 237, 237,237, 237, 237,237,237,97, 197, 229,229,
+74, 42, 97, 237, 237, 237, 237, 237,237, 237, 237,237,237,97, 197, 229,229,
+74, 42, 97, 237, 237, 237, 237, 237,237, 237, 237,237,237,97, 197, 229,229,
+74, 42, 97, 237, 237, 237, 237, 237,237, 237, 237,237,237,97, 197, 229,229,
+74, 42, 97, 237, 237, 237, 236, 236,236, 236, 236,237,237,97, 197, 229,229,
+74, 42, 97, 237, 237, 237, 236, 236,236, 236, 236,237,237,97, 197, 229,229,
+74, 42, 65, 237, 237, 237, 237, 237,237, 237, 237,237,237,196, 197, 229,229,
+74, 42, 65, 65, 237, 237, 237, 237,237, 237, 237,237,196,196, 197, 229,229,
+74, 42, 65, 65, 65, 237, 237, 237,237, 237, 237,196,196,196, 197, 229,229,
+74, 42, 65, 65, 65, 237, 237, 237,237, 237, 237,196,196,196, 197, 229,229,
+};
 
-float dist(float ax, float ay, float bx, float by, float ang) {
-    //PYTAGORAS TEROEM
-    //WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    return sqrt((bx - ax) * (bx - ax) + (by - ay) * (by - ay));
+int depth[13];
+
+#define dist(ax, ay, bx, by) sqrt((bx - ax) * (bx - ax) + (by - ay) * (by - ay))
+
+void drawSprite() {
+    float sx = Saul.x - px;
+    float sy = Saul.y - py;
+    float sz = Saul.z;
+
+    float CS = cos(-pa), SN = sin(-pa);
+    float a = sy * CS + sx * SN;
+    float b = sx * CS - sy * SN;
+    sx = a; 
+    sy = b;
+
+    sx = (sx * 108 / sy) + GFX_LCD_WIDTH / 2;
+    sy = (sz * 108 / sy) + GFX_LCD_HEIGHT / 2;
+
+    int x, y;
+    int scale = 16*80/b;
+
+    if (scale < 0) {
+        scale = 0;
+    }
+
+    if (scale > 32) {
+        scale = 32; //keep fps managable
+    }
+
+    for (int i = -scale / 2; i < scale / 2; i++) {
+        y = sy + i * 5;
+        for (int i2 = -scale/2; i2 < scale/2; i2++) {
+            x = sx + i2 * 5;
+            if (x > 0 && x < GFX_LCD_WIDTH && b > depth[(int)x] /*i'm not sure how or why b > depth prevents the dot from drawing reverse from where it should but i am very thankful for it. as a wise man once said "it's a feature not a bug"*/ && b < depth[(int)x / 20]) {
+                gfx_SetColor(224);
+                gfx_FillRectangle(x - 2, y - 2, 5, 5);
+            }
+        }
+    }
+    
+    
 }
+
 
 void drawRays3D() {
     int r, mx, my, mp, dof;
@@ -67,14 +124,14 @@ void drawRays3D() {
 
     
 
-    ra = pa - degree_rads*13;
+    ra = pa - DRADS*8;
     if (ra < 0) {
-        ra += pi * 2;
+        ra += PI * 2;
     }
-    if (ra > 2 * pi) {
-        ra -= pi * 2;
+    if (ra > 2 * PI) {
+        ra -= PI * 2;
     }
-    for (r = 0; r < 27; r++) {
+    for (r = 0; r < 13; r++) {
         
         
         //HORIZONTAL CHECK
@@ -84,19 +141,19 @@ void drawRays3D() {
 
         int walltypeh, walltypev = 0;
 
-        if (ra>pi) { //up
+        if (ra>PI) { //up
             ry = (((int)usePY >> 6) << 6) - 0.0001;
             rx = (usePY - ry) * aTan + usePX;
             yo = -64;
             xo = -yo * aTan;
         }
-        if (ra < pi) { //down
+        if (ra < PI) { //down
             ry = (((int)usePY >> 6) << 6) + 64;
             rx = (usePY - ry) * aTan + usePX;
             yo = 64;
             xo = -yo * aTan;
         }
-        if (ra == 0 || ra == pi) { // left or right exactly
+        if (ra == 0 || ra == PI) { // left or right exactly
             rx = 999999;
             ry = 999999;
             dof = 8;
@@ -109,7 +166,7 @@ void drawRays3D() {
                 dof = 8;
                 hx = rx;
                 hy = ry;
-                disH = dist(usePX, usePY, rx, ry, pa);
+                disH = dist(usePX, usePY, rx, ry);
                 walltypeh = map[mp];
             }
             else {
@@ -125,19 +182,19 @@ void drawRays3D() {
         float disV = 999999, vx = usePX, vy = usePY;
         float nTan = -tan(ra);
 
-        if (ra > pi2 && ra<pi3) { //right
+        if (ra > PI2 && ra<PI3) { //right
             rx = (((int)usePX >> 6) << 6) - 0.0001;
             ry = (usePX - rx) * nTan + usePY;
             xo = -64;
             yo = -xo * nTan;
         }
-        if (ra < pi2 || ra > pi3) { //left
+        if (ra < PI2 || ra > PI3) { //left
             rx = (((int)usePX >> 6) << 6) + 64;
             ry = (usePX - rx) * nTan + usePY;
             xo = 64;
             yo = -xo * nTan;
         }
-        if (ra == 0 || ra == pi) { //up or down exactly
+        if (ra == 0 || ra == PI) { //up or down exactly
             ry = 999999;
             rx = 999999;
             dof = 8;
@@ -150,7 +207,7 @@ void drawRays3D() {
                 dof = 8;
                 vx = rx;
                 vy = ry;
-                disV = dist(usePX, usePY, vx, vy, pa);
+                disV = dist(usePX, usePY, vx, vy);
                 walltypev = map[mp];
             }
             else {
@@ -159,6 +216,7 @@ void drawRays3D() {
                 dof += 1;
             }
         }
+
         int disT = 99999;
         if (disV < disH) {
             gfx_SetColor(walltypev-1);
@@ -172,20 +230,15 @@ void drawRays3D() {
             ry = hy;
             disT = disH;
         }
-        
-        if (k_al) {
-            gfx_SetColor(7);
-            gfx_Line(usePX / 2, usePY / 2, rx / 2, ry / 2);
-        }
 
         float ca = pa - ra;
         
         if (ca < 0) {
-            ca -= 2 * pi;
+            ca -= 2 * PI;
         }
 
-        if (ca > 2 * pi) {
-            ca -= 2 * pi;
+        if (ca > 2 * PI) {
+            ca -= 2 * PI;
         }
         
         disT = disT * cos(ca); //anti fisheye
@@ -195,18 +248,21 @@ void drawRays3D() {
             lineH = SCHEIGHT;
         }
 
-
+        depth[r] = disT;
 
         gfx_FillRectangle(r * 20, fabsf(lineH - SCHEIGHT), 20, lineH*5);
-        ra += degree_rads * 4;
+        ra += DRADS * 4;
         if (ra < 0) {
-            ra += pi * 2;
+            ra += PI * 2;
         }
-        if (ra > 2 * pi) {
-            ra -= pi * 2;
+        if (ra > 2 * PI) {
+            ra -= PI * 2;
         }
+        
     }
+    drawSprite();
 }
+
 
 void drawMap2D()
 {
@@ -230,14 +286,25 @@ void drawMap2D()
 void drawPlayer() {
     gfx_SetColor(231);
     gfx_FillRectangle(px-2, py-2, 5, 5);
+    gfx_Line(px, py, px + pdx * 5, py + pdy * 5);
+
+    gfx_SetColor(224);
+    gfx_FillRectangle(Saul.x - 2, Saul.y - 2, 5, 5);
+}
+
+void drawHud() {
+    gfx_SetColor(255);
+    gfx_FillRectangle(GFX_LCD_WIDTH - 60, 0, 60, GFX_LCD_HEIGHT);
 }
 
 void draw()
 {
-    gfx_FillScreen(30);
-    gfx_SetColor(74);
-    gfx_FillRectangle(0, GFX_LCD_HEIGHT * 0.25, GFX_LCD_WIDTH, GFX_LCD_HEIGHT * 0.75);
+    gfx_FillScreen(74);
+    gfx_SetColor(30);
+    gfx_FillRectangle(0, 0, GFX_LCD_WIDTH, GFX_LCD_HEIGHT * 0.25);
     drawRays3D();
+    drawHud();
+
 
     if (k_al) {
         drawMap2D();
@@ -251,7 +318,7 @@ void gametick() {
     if (k_lf) {
         pa -= 0.1;
         if (pa < 0) {
-            pa += 2 * pi;
+            pa += 2 * PI;
         }
         pdx = cos(pa)*5;
         pdy = sin(pa)*5;
@@ -259,8 +326,8 @@ void gametick() {
 
     if (k_rg) {
         pa += 0.1;
-        if (pa > 2*pi) {
-            pa -= 2 * pi;
+        if (pa > 2*PI) {
+            pa -= 2 * PI;
         }
         pdx = cos(pa) * 5;
         pdy = sin(pa) * 5;
@@ -379,6 +446,10 @@ void init() {
     pa = 0;
     pdx = cos(pa) * 5;
     pdy = sin(pa) * 5;
+    Saul.type = 1;
+    Saul.x = 192;
+    Saul.y = 40;
+    Saul.z = 20;
 }
 
 int main()
