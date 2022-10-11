@@ -14,7 +14,7 @@ bool lost = false;
 
 float px, py, pdx, pdy, pa;
 
-// 15:40 in video 3
+// 19:23 in video 3
 
 // 320x240 -> 106x48
 // Much MUCH more managable for graphics...
