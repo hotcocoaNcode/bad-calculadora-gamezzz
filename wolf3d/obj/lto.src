@@ -29,7 +29,7 @@ _drawPixelScale5:
 	section	.text,"ax",@progbits
 	public	_drawSprite
 _drawSprite:
-	ld	hl, -40
+	ld	hl, -57
 	call	__frameset
 	ld	bc, (_Saul+9)
 	push	bc
@@ -48,7 +48,7 @@ _drawSprite:
 	ld	e, d
 	call	__fsub
 	ld	(ix - 3), bc
-	ld	(ix - 6), a
+	ld	(ix - 4), a
 	ld	bc, (_Saul+12)
 	push	bc
 	pop	hl
@@ -65,8 +65,8 @@ _drawSprite:
 	ld	a, e
 	ld	e, d
 	call	__fsub
-	ld	(ix - 9), bc
-	ld	(ix - 12), a
+	ld	(ix - 7), bc
+	ld	(ix - 10), a
 	ld	bc, (_Saul+15)
 	push	bc
 	pop	hl
@@ -76,8 +76,8 @@ _drawSprite:
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
-	ld	(ix - 21), bc
-	ld	(ix - 24), a
+	ld	(ix - 19), bc
+	ld	(ix - 26), a
 	ld	de, (_pa)
 	ld	iy, _pa
 	lea	hl, iy + 3
@@ -85,8 +85,8 @@ _drawSprite:
 	push	hl
 	push	de
 	call	_cos
-	ld	(ix - 15), hl
-	ld	(ix - 18), e
+	ld	(ix - 13), hl
+	ld	(ix - 16), e
 	pop	hl
 	pop	hl
 	ld	hl, (_pa)
@@ -97,9 +97,9 @@ _drawSprite:
 	call	_sin
 	push	hl
 	pop	bc
-	ld	(ix - 27), bc
+	ld	(ix - 22), bc
 	ld	a, e
-	ld	(ix - 30), a
+	ld	(ix - 23), a
 	pop	hl
 	pop	hl
 	call	__fneg
@@ -107,33 +107,33 @@ _drawSprite:
 	pop	hl
 	ld	e, a
 	ld	bc, (ix - 3)
-	ld	a, (ix - 6)
+	ld	a, (ix - 4)
 	call	__fmul
 	push	bc
 	pop	iy
 	ld	d, a
-	ld	bc, (ix - 9)
-	ld	a, (ix - 12)
-	ld	hl, (ix - 15)
-	ld	e, (ix - 18)
+	ld	bc, (ix - 7)
+	ld	a, (ix - 10)
+	ld	hl, (ix - 13)
+	ld	e, (ix - 16)
 	call	__fmul
 	lea	hl, iy
 	ld	e, d
 	call	__fadd
-	ld	(ix - 33), bc
-	ld	(ix - 36), a
-	ld	bc, (ix - 9)
-	ld	a, (ix - 12)
-	ld	hl, (ix - 27)
-	ld	e, (ix - 30)
+	ld	(ix - 29), bc
+	ld	(ix - 32), a
+	ld	bc, (ix - 7)
+	ld	a, (ix - 10)
+	ld	hl, (ix - 22)
+	ld	e, (ix - 23)
 	call	__fmul
 	push	bc
 	pop	iy
 	ld	d, a
 	ld	bc, (ix - 3)
-	ld	a, (ix - 6)
-	ld	hl, (ix - 15)
-	ld	e, (ix - 18)
+	ld	a, (ix - 4)
+	ld	hl, (ix - 13)
+	ld	e, (ix - 16)
 	call	__fmul
 	lea	hl, iy
 	ld	e, d
@@ -141,21 +141,21 @@ _drawSprite:
 	push	bc
 	pop	iy
 	ld	d, a
-	ld	bc, (ix - 33)
-	ld	a, (ix - 36)
+	ld	bc, (ix - 29)
+	ld	a, (ix - 32)
 	ld	hl, -2621440
 	ld	e, 66
 	call	__fmul
 	lea	hl, iy
 	ld	e, d
 	call	__fdiv
-	ld	hl, 2097152
+	ld	hl, 131072
 	ld	e, 67
 	call	__fadd
-	ld	(ix - 6), bc
-	ld	(ix - 9), a
-	ld	bc, (ix - 21)
-	ld	a, (ix - 24)
+	ld	(ix - 22), bc
+	ld	(ix - 23), a
+	ld	bc, (ix - 19)
+	ld	a, (ix - 26)
 	ld	hl, -2621440
 	dec	e
 	call	__fmul
@@ -165,13 +165,13 @@ _drawSprite:
 	ld	hl, -1048576
 	ld	e, 66
 	call	__fadd
-	ld	(ix - 12), bc
-	ld	(ix - 15), a
+	ld	(ix - 26), bc
+	ld	(ix - 29), a
 	ld	bc, -6291456
 	ld	a, 68
-	ld	(ix - 36), iy
+	ld	(ix - 50), iy
 	lea	hl, iy
-	ld	(ix - 37), d
+	ld	(ix - 51), d
 	ld	e, d
 	call	__fdiv
 	call	__ftol
@@ -182,7 +182,10 @@ _drawSprite:
 	sbc	hl, de
 	call	pe, __setflag
 	jp	p, BB1_2
-	ld	bc, 0
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	bc
 BB1_2:
 	ld	de, 32
 	push	bc
@@ -192,34 +195,56 @@ BB1_2:
 	jr	c, BB1_4
 	ld	bc, 32
 BB1_4:
-	ld	a, 1
 	push	bc
 	pop	hl
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	push	bc
+	pop	iy
+	ld	a, l
+	call	__ltof
+	push	bc
+	pop	hl
+	ld	e, a
+	ld	bc, -8388608
+	ld	a, 65
+	call	__fdiv
+	ld	(ix - 10), bc
+	ld	(ix - 13), a
+	ld	a, 1
+	lea	hl, iy
 	ld	c, a
 	call	__ishru
 	push	hl
-	pop	de
+	pop	iy
 	call	__ineg
 	push	hl
-	pop	iy
-	push	de
-	pop	hl
+	pop	de
+	lea	hl, iy
 	ld	bc, -5
 	call	__imulu
-	ld	(ix - 24), hl
-	push	de
-	pop	hl
+	ld	(ix - 38), hl
+	lea	hl, iy
 	ld	c, a
 	call	__ishl
-	ld	(ix - 27), hl
-BB1_5:
-	lea	hl, iy
+	lea	bc, iy
+	ld	(ix - 41), hl
 	or	a, a
-	sbc	hl, de
+	sbc	hl, hl
+	ld	(ix - 3), hl
+	dec	a
+	ld	(ix - 4), a
+BB1_5:
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
 	jp	z, BB1_14
-	ld	(ix - 18), de
-	ld	(ix - 21), iy
-	lea	hl, iy
+	ld	(ix - 32), bc
+	ld	(ix - 35), de
+	ex	de, hl
 	ld	bc, 5
 	call	__imulu
 	push	hl
@@ -233,28 +258,45 @@ BB1_5:
 	push	bc
 	pop	hl
 	ld	e, a
-	ld	bc, (ix - 12)
-	ld	a, (ix - 15)
+	ld	bc, (ix - 26)
+	ld	a, (ix - 29)
 	call	__fadd
 	call	__ftol
 	push	bc
+	pop	iy
+	ld	bc, (ix - 3)
+	ld	a, (ix - 4)
+	call	__ftol
+	push	bc
 	pop	hl
+	ld	c, 4
+	call	__ishl
+	ld	(ix - 57), hl
 	ld	de, -2
-	add	hl, de
-	ld	(ix - 40), hl
-	ld	hl, (ix - 27)
-	ld	iy, (ix - 24)
+	add	iy, de
+	ld	(ix - 54), iy
+	ld	de, (ix - 41)
+	ld	iy, (ix - 38)
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	xor	a, a
 BB1_7:
+	push	de
+	pop	hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
 	jp	z, BB1_13
-	ld	(ix - 30), hl
+	ld	(ix - 19), a
+	ld	(ix - 16), bc
+	ld	(ix - 44), de
 	lea	hl, iy
-	ld	(ix - 3), iy
-	ld	iy, (ix - 3)
+	ld	(ix - 7), iy
+	ld	iy, (ix - 7)
 	add	iy, iy
-	ld	iy, (ix - 3)
+	ld	iy, (ix - 7)
 	sbc	hl, hl
 	lea	bc, iy
 	ld	a, l
@@ -262,19 +304,19 @@ BB1_7:
 	push	bc
 	pop	hl
 	ld	e, a
-	ld	bc, (ix - 6)
-	ld	a, (ix - 9)
+	ld	bc, (ix - 22)
+	ld	a, (ix - 23)
 	call	__fadd
 	call	__ftol
-	ld	(ix - 33), bc
+	ld	(ix - 47), bc
 	push	bc
 	pop	hl
 	dec	hl
-	ld	de, 319
+	ld	de, 199
 	or	a, a
 	sbc	hl, de
 	jp	nc, BB1_12
-	ld	hl, (ix - 33)
+	ld	hl, (ix - 47)
 	ld	bc, 3
 	call	__imulu
 	push	hl
@@ -287,24 +329,24 @@ BB1_7:
 	push	bc
 	pop	iy
 	add	iy, iy
-	ld	iy, (ix - 3)
+	ld	iy, (ix - 7)
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
 	push	bc
 	pop	hl
 	ld	e, a
-	ld	bc, (ix - 36)
-	ld	a, (ix - 37)
+	ld	bc, (ix - 50)
+	ld	a, (ix - 51)
 	call	__fcmp
 	jp	p, BB1_12
-	ld	hl, (ix - 33)
-	ld.sis	bc, 20
-	call	__sdivu
-	ld	de, 0
-	ld	e, l
-	ld	d, h
-	ex	de, hl
+	ld	hl, (ix - 47)
+	ld	b, l
+	ld	c, 20
+	call	__bdivu
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
 	ld	bc, 3
 	call	__imulu
 	push	hl
@@ -317,43 +359,66 @@ BB1_7:
 	push	bc
 	pop	iy
 	add	iy, iy
-	ld	iy, (ix - 3)
+	ld	iy, (ix - 7)
 	sbc	hl, hl
 	ld	a, l
 	call	__ltof
-	ld	hl, (ix - 36)
-	ld	e, (ix - 37)
+	ld	hl, (ix - 50)
+	ld	e, (ix - 51)
 	call	__fcmp
 	jp	p, BB1_12
-	ld	hl, -32
+	ld	bc, (ix - 16)
+	ld	a, (ix - 19)
+	call	__ftol
+	ld	hl, (ix - 57)
+	add	hl, bc
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _SaulTex
+	add	hl, de
+	ld	l, (hl)
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
 	ld	de, -2
-	ld	iy, (ix - 33)
+	ld	iy, (ix - 47)
 	add	iy, de
 	ld	hl, 5
 	push	hl
 	push	hl
-	ld	hl, (ix - 40)
+	ld	hl, (ix - 54)
 	push	hl
 	push	iy
 	call	_gfx_FillRectangle
-	ld	iy, (ix - 3)
+	ld	iy, (ix - 7)
 	pop	hl
 	pop	hl
 	pop	hl
 	pop	hl
 BB1_12:
+	ld	bc, (ix - 10)
+	ld	a, (ix - 13)
+	ld	hl, (ix - 16)
+	ld	e, (ix - 19)
+	call	__fadd
 	ld	de, 5
 	add	iy, de
-	ld	hl, (ix - 30)
-	dec	hl
+	ld	de, (ix - 44)
+	dec	de
 	jp	BB1_7
 BB1_13:
-	ld	iy, (ix - 21)
-	inc	iy
-	ld	de, (ix - 18)
+	ld	bc, (ix - 10)
+	ld	a, (ix - 13)
+	ld	hl, (ix - 3)
+	ld	e, (ix - 4)
+	call	__fadd
+	ld	(ix - 3), bc
+	ld	(ix - 4), a
+	ld	de, (ix - 35)
+	inc	de
+	ld	bc, (ix - 32)
 	jp	BB1_5
 BB1_14:
 	ld	sp, ix
@@ -1655,11 +1720,11 @@ _drawHud:
 	section	.text,"ax",@progbits
 	public	_draw
 _draw:
-	ld	hl, 74
+	ld	hl, -125
 	push	hl
 	call	_gfx_FillScreen
 	pop	hl
-	ld	hl, 30
+	ld	hl, -60
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -2380,77 +2445,77 @@ _mapS:
 	section	.data,"aw",@progbits
 	public	_map
 _map:
-	dl	148
-	dl	148
-	dl	148
-	dl	148
-	dl	148
-	dl	148
-	dl	148
-	dl	148
-	dl	148
+	dl	164
+	dl	164
+	dl	164
+	dl	164
+	dl	164
+	dl	164
+	dl	164
+	dl	164
+	dl	164
 	dl	0
 	dl	0
 	dl	0
 	dl	0
 	dl	0
 	dl	0
-	dl	148
-	dl	148
+	dl	164
+	dl	164
 	dl	0
 	dl	0
 	dl	0
 	dl	0
 	dl	0
 	dl	0
-	dl	148
-	dl	148
+	dl	164
+	dl	164
 	dl	0
 	dl	0
-	dl	9
-	dl	9
-	dl	9
+	dl	165
+	dl	165
+	dl	165
 	dl	130
-	dl	148
-	dl	148
+	dl	164
+	dl	164
 	dl	0
 	dl	0
-	dl	9
-	dl	9
-	dl	9
+	dl	165
+	dl	165
+	dl	165
 	dl	0
-	dl	148
-	dl	148
-	dl	0
-	dl	0
-	dl	9
-	dl	9
+	dl	164
+	dl	164
 	dl	0
 	dl	0
-	dl	148
-	dl	148
+	dl	165
+	dl	165
+	dl	0
+	dl	0
+	dl	164
+	dl	164
 	dl	0
 	dl	0
 	dl	130
 	dl	0
 	dl	0
 	dl	0
-	dl	148
-	dl	148
-	dl	148
-	dl	148
-	dl	148
-	dl	148
-	dl	148
-	dl	148
-	dl	148
+	dl	164
+	dl	164
+	dl	164
+	dl	164
+	dl	164
+	dl	164
+	dl	164
+	dl	164
+	dl	164
 
 	section	.data,"aw",@progbits
 	public	_SaulTex
 _SaulTex:
-	dl	74
-	dl	42
-	dl	65
+	dl	229
+	dl	197
+	dl	196
 	dl	97
 	dl	97
 	dl	97
@@ -2465,9 +2530,8 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
-	dl	65
+	dl	197
+	dl	196
 	dl	97
 	dl	97
 	dl	97
@@ -2482,8 +2546,7 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
+	dl	197
 	dl	97
 	dl	237
 	dl	97
@@ -2499,8 +2562,7 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
+	dl	197
 	dl	97
 	dl	237
 	dl	238
@@ -2516,8 +2578,7 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
+	dl	197
 	dl	97
 	dl	237
 	dl	238
@@ -2533,8 +2594,7 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
+	dl	197
 	dl	97
 	dl	237
 	dl	238
@@ -2550,25 +2610,23 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
+	dl	197
 	dl	97
 	dl	237
-	dl	33
+	dl	65
 	dl	0
-	dl	33
+	dl	65
 	dl	237
 	dl	237
 	dl	237
-	dl	33
+	dl	65
 	dl	0
-	dl	33
+	dl	65
 	dl	97
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
+	dl	197
 	dl	97
 	dl	237
 	dl	238
@@ -2584,8 +2642,7 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
+	dl	197
 	dl	97
 	dl	237
 	dl	237
@@ -2601,8 +2658,7 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
+	dl	197
 	dl	97
 	dl	237
 	dl	237
@@ -2618,8 +2674,7 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
+	dl	197
 	dl	97
 	dl	237
 	dl	237
@@ -2635,8 +2690,7 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
+	dl	197
 	dl	97
 	dl	237
 	dl	237
@@ -2652,8 +2706,7 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
+	dl	197
 	dl	97
 	dl	237
 	dl	237
@@ -2669,9 +2722,8 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
-	dl	65
+	dl	197
+	dl	196
 	dl	237
 	dl	237
 	dl	237
@@ -2686,10 +2738,9 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
-	dl	65
-	dl	65
+	dl	197
+	dl	196
+	dl	196
 	dl	237
 	dl	237
 	dl	237
@@ -2703,11 +2754,10 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
-	dl	65
-	dl	65
-	dl	65
+	dl	197
+	dl	196
+	dl	196
+	dl	196
 	dl	237
 	dl	237
 	dl	237
@@ -2720,11 +2770,10 @@ _SaulTex:
 	dl	197
 	dl	229
 	dl	229
-	dl	74
-	dl	42
-	dl	65
-	dl	65
-	dl	65
+	dl	197
+	dl	196
+	dl	196
+	dl	196
 	dl	237
 	dl	237
 	dl	237
@@ -2735,7 +2784,6 @@ _SaulTex:
 	dl	196
 	dl	196
 	dl	197
-	dl	229
 	dl	229
 
 	section	.bss,"aw",@nobits
@@ -2828,6 +2876,7 @@ _.str.1:
 	extern	_os_GetCSC
 	extern	__fsub
 	extern	_os_HomeUp
+	extern	__bdivu
 	extern	__frameset
 	extern	_sin
 	extern	_kb_Scan
@@ -2838,7 +2887,6 @@ _.str.1:
 	extern	__fmul
 	extern	_gfx_SwapDraw
 	extern	_gfx_SetDraw
-	extern	__sdivu
 	extern	_gfx_FillScreen
 	extern	__Unwind_SjLj_Unregister
 	extern	__fneg
