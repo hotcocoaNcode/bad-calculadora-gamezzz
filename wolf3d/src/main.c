@@ -305,8 +305,8 @@ void drawHud() {
 
 void draw()
 {
-    gfx_FillScreen(131);
-    gfx_SetColor(196);
+    gfx_FillScreen(247); // floor
+    gfx_SetColor(196); // ceiling
     gfx_FillRectangle(0, 0, GFX_LCD_WIDTH, GFX_LCD_HEIGHT * 0.25);
     drawRays3D();
     drawHud();
